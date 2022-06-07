@@ -1,6 +1,11 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const fs = require('fs')
+const echarts = require('echarts');
+
+/*
+  Load 'my_config.js' if it's available
+*/
 let config;
 
 try {
@@ -21,17 +26,31 @@ Structure of the request body:
 {
   outputPath: "34/54",
   echartsOptions: {...}
-  height: 300,
-  width: 500
+  height: 300, //default is 300
+  width: 500  // default is 500
 }
 */
 
 app.post('/svg', (req, res) => {
-  console.log(req.body)
-  const outputPath = req.body.outputPath
+  const svgPath = req.body.outputPath + '/' + config.fileName
+
+  const chart = echarts.init(null, null, {
+    renderer: 'svg',
+    ssr: true,
+    width: req.body.width || 500,
+    height: req.body.heigth || 300
+  });
+
+  // remove any animations
+  chart.setOption({...req.body.echartsOptions, animation: false});
+
+  // Output a string
+  const svgStr = chart.renderToSVGString();
+
+  fs.writeFileSync(config.rootPath + svgPath, chart.renderToSVGString(), 'utf-8');
 
   res.type('text/plain')
-  res.send(outputPath + '/' + config.fileName)
+  res.send(svgPath)
 })
 
 app.get('/version', (req, res) => {
