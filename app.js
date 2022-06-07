@@ -3,6 +3,8 @@ const bodyParser = require('body-parser')
 const fs = require('fs')
 const echarts = require('echarts');
 
+const version = "1.0.0"
+
 /*
   Load 'my_config.js' if it's available
 */
@@ -55,7 +57,7 @@ app.post('/svg', (req, res) => {
 
 app.get('/version', (req, res) => {
     res.type('text/plain')
-    res.send(config.version)
+    res.send(version)
 })
 
 app.use((req, res) => {
