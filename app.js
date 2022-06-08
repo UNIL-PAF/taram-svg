@@ -40,14 +40,13 @@ app.post('/svg', (req, res) => {
     renderer: 'svg',
     ssr: true,
     width: req.body.width || 500,
-    height: req.body.heigth || 300
+    height: req.body.height || 300
   });
 
-  // remove any animations
-  chart.setOption({...req.body.echartsOptions, animation: false});
+const echartsOptions = JSON.parse(req.body.echartsOptions)
 
-  // Output a string
-  const svgStr = chart.renderToSVGString();
+  // remove any animations
+  chart.setOption({...echartsOptions, animation: false});
 
   fs.writeFileSync(config.rootPath + svgPath, chart.renderToSVGString(), 'utf-8');
 
