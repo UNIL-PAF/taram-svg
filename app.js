@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const plot = require('./plot')
 const fs = require('fs')
-const echarts = require('echarts');
 
 const version = "1.0.0"
 
@@ -33,23 +33,19 @@ Structure of the request body:
 }
 */
 
+app.post('/pdf', (req, res) => {
+  const pdfPath = req.body.outputPath + '/' + config.fileName + '.pdf'
+  const svgString = plot.createSvg(req.body)
+  plot.svgToPdf(svgString, config.rootPath + pdfPath)
+  res.type('text/plain')
+  res.send(pdfPath)
+})
+
+
 app.post('/svg', (req, res) => {
-  const svgPath = req.body.outputPath + '/' + config.fileName
-
-  const chart = echarts.init(null, null, {
-    renderer: 'svg',
-    ssr: true,
-    width: req.body.width || 500,
-    height: req.body.height || 300
-  });
-
-const echartsOptions = JSON.parse(req.body.echartsOptions)
-
-  // remove any animations
-  chart.setOption({...echartsOptions, animation: false});
-
-  fs.writeFileSync(config.rootPath + svgPath, chart.renderToSVGString(), 'utf-8');
-
+  const svgPath = req.body.outputPath + '/' + config.fileName + '.svg'
+  const svgString = plot.createSvg(req.body)
+  fs.writeFileSync(config.rootPath + svgPath, svgString, 'utf-8');
   res.type('text/plain')
   res.send(svgPath)
 })
