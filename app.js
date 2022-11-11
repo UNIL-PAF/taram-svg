@@ -80,11 +80,13 @@ app.post('/png', (req, res) => {
     }
 
     const canvas = plot.createPng(req.body)
-    res.writeHead(200, {
-        "Content-Type": "image/png"
+    // strip off the data: url prefix to get just the base64-encoded bytes
+    var data = canvas.toDataURL().replace(/^data:image\/\w+;base64,/, "");
+    var buf = Buffer.from(data, 'base64');
+    fs.writeFile(svgOut, buf, () => {
+        res.type('text/plain')
+        res.send(svgPath)
     });
-    res.write(canvas.toBuffer("image/png"));
-    res.end();
 })
 
 app.get('/version', (req, res) => {
