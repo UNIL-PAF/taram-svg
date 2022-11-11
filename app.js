@@ -35,19 +35,56 @@ Structure of the request body:
 
 app.post('/pdf', (req, res) => {
   const pdfPath = req.body.outputPath + '/' + config.fileName + '.pdf'
-  const svgString = plot.createSvg(req.body)
+  const svgString = plot.creatChart(req.body, 'svg')
   plot.svgToPdf(svgString, config.rootPath + pdfPath)
   res.type('text/plain')
   res.send(pdfPath)
 })
 
-
 app.post('/svg', (req, res) => {
-  const svgPath = req.body.outputPath + '/' + config.fileName + '.svg'
-  const svgString = plot.createSvg(req.body)
-  fs.writeFileSync(config.rootPath + svgPath, svgString, 'utf-8');
+  let svgPath = undefined
+  let svgOut = undefined
+  if(req.body.outputPath){
+     svgPath = req.body.outputPath + '/' + config.fileName + '.svg'
+     svgOut = config.rootPath + svgPath
+  }else if(req.query.path){
+      svgPath = req.query.path
+      svgOut = config.rootPath + svgPath
+      console.log(svgPath)
+      console.log(svgOut)
+  }else{
+    svgPath = "/tmp/a.svg"
+    svgOut = svgPath
+  }
+
+  const svgString = plot.creatSvg(req.body)
+  fs.writeFileSync(svgOut, svgString, 'utf-8');
   res.type('text/plain')
   res.send(svgPath)
+})
+
+app.post('/png', (req, res) => {
+    let svgPath = undefined
+    let svgOut = undefined
+    if(req.body.outputPath){
+        svgPath = req.body.outputPath + '/' + config.fileName + '.png'
+        svgOut = config.rootPath + svgPath
+    }else if(req.query.path){
+        svgPath = req.query.path
+        svgOut = config.rootPath + svgPath
+        console.log(svgPath)
+        console.log(svgOut)
+    }else{
+        svgPath = "/tmp/a.png"
+        svgOut = svgPath
+    }
+
+    const canvas = plot.createPng(req.body)
+    res.writeHead(200, {
+        "Content-Type": "image/png"
+    });
+    res.write(canvas.toBuffer("image/png"));
+    res.end();
 })
 
 app.get('/version', (req, res) => {

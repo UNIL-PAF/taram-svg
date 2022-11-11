@@ -2,6 +2,7 @@ const fs = require('fs')
 const echarts = require('echarts');
 const PDFDocument = require('pdfkit');
 const SVGtoPDF = require('svg-to-pdfkit')
+const {createCanvas} = require('canvas')
 
 const svgToPdf = (svgString, pdfPath) => {
   var doc = new PDFDocument({size: [550,250],
@@ -17,8 +18,7 @@ const svgToPdf = (svgString, pdfPath) => {
   doc.end();
 }
 
-const createSvg = (options) => {
-
+const creatSvg = (options) => {
   const chart = echarts.init(null, null, {
     renderer: 'svg',
     ssr: true,
@@ -30,8 +30,19 @@ const createSvg = (options) => {
 
   // remove any animations
   chart.setOption({...echartsOptions, animation: false});
-  return chart.renderToSVGString()
+  return chart.renderToSVGString(options.width || 600, options.height || 300)
 }
 
-exports.createSvg = createSvg
+const createPng = (options) => {
+    const canvas = createCanvas(options.width || 1024 , options.height || 768);
+// ECharts can use the Canvas instance created by node-canvas as a container directly
+    const chart = echarts.init(canvas);
+
+    const echartsOptions = JSON.parse(options.echartsOptions)
+    chart.setOption({...echartsOptions, animation: false});
+    return canvas
+}
+
+exports.creatSvg = creatSvg
+exports.createPng = createPng
 exports.svgToPdf = svgToPdf
