@@ -6,6 +6,17 @@ const {createCanvas} = require('canvas')
 
 echarts.setPlatformAPI({createCanvas})
 
+const jsonParsing = function(key, value) {
+    if (typeof value === "string" &&
+        value.startsWith("/Function(") &&
+        value.length <= 200 &&
+        value.endsWith(")/")) {
+        value = value.substring(10, value.length - 2);
+        return (0, eval)("(" + value + ")");
+    }
+    return value;
+}
+
 const svgToPdf = (svgString, pdfPath) => {
   var doc = new PDFDocument({size: [550,250],
         margins : {
@@ -28,7 +39,8 @@ const createSvg = (options) => {
     height: options.height || 300
   });
 
-  const echartsOptions = JSON.parse(options.echartsOptions)
+  //const echartsOptions = JSON.parse(options.echartsOptions)
+    const echartsOptions = JSON.parse(options.echartsOptions, jsonParsing);
 
   // remove any animations
   chart.setOption({...echartsOptions, animation: false});
@@ -40,7 +52,7 @@ const createPng = (options) => {
 // ECharts can use the Canvas instance created by node-canvas as a container directly
     const chart = echarts.init(canvas);
 
-    const echartsOptions = JSON.parse(options.echartsOptions)
+    const echartsOptions = JSON.parse(options.echartsOptions, jsonParsing)
     chart.setOption({...echartsOptions, animation: false});
 
     return canvas
