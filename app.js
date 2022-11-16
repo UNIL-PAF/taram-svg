@@ -21,7 +21,8 @@ try {
 }
 
 const app = express()
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '5mb'}));
+app.use(bodyParser.urlencoded({limit: '5mb', extended: true}));
 
 /*
 Structure of the request body:
@@ -50,14 +51,12 @@ app.post('/svg', (req, res) => {
   }else if(req.query.path){
       svgPath = req.query.path
       svgOut = config.rootPath + svgPath
-      console.log(svgPath)
-      console.log(svgOut)
   }else{
     svgPath = "/tmp/a.svg"
     svgOut = svgPath
   }
 
-  const svgString = plot.creatSvg(req.body)
+  const svgString = plot.createSvg(req.body)
   fs.writeFileSync(svgOut, svgString, 'utf-8');
   res.type('text/plain')
   res.send(svgPath)
@@ -72,8 +71,6 @@ app.post('/png', (req, res) => {
     }else if(req.query.path){
         svgPath = req.query.path
         svgOut = config.rootPath + svgPath
-        console.log(svgPath)
-        console.log(svgOut)
     }else{
         svgPath = "/tmp/a.png"
         svgOut = svgPath
