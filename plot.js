@@ -35,8 +35,8 @@ const createSvg = (options) => {
   const chart = echarts.init(null, null, {
     renderer: 'svg',
     ssr: true,
-    width: options.width || 600,
-    height: options.height || 300
+    width: options.width || 1440,
+    height: options.height || 720
   });
 
   //const echartsOptions = JSON.parse(options.echartsOptions)
