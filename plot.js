@@ -44,7 +44,7 @@ const createSvg = (options) => {
 
   // remove any animations
   chart.setOption({...echartsOptions, animation: false});
-  return chart.renderToSVGString({opts: {useViewBox: true}})
+  return chart.renderToSVGString()
 }
 
 const createPng = (options) => {
