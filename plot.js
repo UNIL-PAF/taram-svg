@@ -29,6 +29,7 @@ const svgToPdf = (svgString, pdfPath) => {
   SVGtoPDF(doc, svgString, 0, 0);
   doc.pipe(outStream);
   doc.end();
+  return outStream
 }
 
 const createSvg = (options) => {
@@ -39,8 +40,7 @@ const createSvg = (options) => {
     height: options.height || 720
   });
 
-  //const echartsOptions = JSON.parse(options.echartsOptions)
-    const echartsOptions = JSON.parse(options.echartsOptions, jsonParsing);
+  const echartsOptions = JSON.parse(options.echartsOptions, jsonParsing);
 
   // remove any animations
   chart.setOption({...echartsOptions, animation: false});
