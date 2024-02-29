@@ -36,7 +36,9 @@ Structure of the request body:
 
 app.post('/pdf', (req, res) => {
   const pdfPath = req.body.outputPath + '/' + config.fileName + '.pdf'
-  const svgString = plot.createSvg({...req.body, width: 800, height: 300})
+  const width = req.body.width || 800
+  const heigth = req.body.height || 300
+  const svgString = plot.createSvg({...req.body, width: width, height: heigth})
   const outStream = plot.svgToPdf(svgString, config.rootPath + pdfPath)
   res.type('text/plain')
   outStream.on('finish', () => res.send(pdfPath));
