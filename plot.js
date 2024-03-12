@@ -9,7 +9,7 @@ echarts.setPlatformAPI({createCanvas})
 const jsonParsing = function(key, value) {
     if (typeof value === "string" &&
         value.startsWith("/Function(") &&
-        value.length <= 200 &&
+        value.length <= 1000 &&
         value.endsWith(")/")) {
         value = value.substring(10, value.length - 2);
         return (0, eval)("(" + value + ")");
