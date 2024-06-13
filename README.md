@@ -1,4 +1,4 @@
-# taram-svg
+# Taram SVG
 
 A simple NodeJS server which creates SVG files from [EChart](https://echarts.apache.org/en/index.html) plots.
 
