@@ -38,6 +38,13 @@ app.post('/pdf', (req, res) => {
   const pdfPath = req.body.outputPath + '/' + config.fileName + '.pdf'
   const width = req.body.width || 800
   const heigth = req.body.height || 300
+
+  if(config.debug === true){
+      console.log("PDF")
+      console.log(pdfPath)
+      console.log(req.body)
+  }
+
   const svgString = plot.createSvg({...req.body, width: width, height: heigth})
   const outStream = plot.svgToPdf(svgString, config.rootPath + pdfPath)
   res.type('text/plain')
